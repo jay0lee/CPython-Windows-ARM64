@@ -22,6 +22,9 @@ jobs:
       - name: Set Python Version
         run: echo '::set-env name=PYTHON_VER::3.8.4'
 
+      - name: Get Python Version
+        run: echo 'The Python version is' $PYTHON_VER'
+
       - name: Compile Python
         run: |
           curl -O -L https://github.com/python/cpython/archive/v$PYTHON_VER.tar.gz
