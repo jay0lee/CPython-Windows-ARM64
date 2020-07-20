@@ -42,8 +42,11 @@ jobs:
           dir PCBuild
           call "PCBuild\find_msbuild.bat" %MSBUILD%
           set PCBUILD=PCbuild\
+          mkdir externals
+          set EXTERNALS=externals
           set Py_OutDir=%PCBUILD%
           call "Tools\msi\get_externals.bat"
+          dir externals
           set RELEASE_URI=http://github.com/jay0lee/CPython-Windows-{arch}
           set DOWNLOAD_URL=$RELEASE_URI/releases
           set BUILDOPTS=/p:Platform=arm64 /p:BuildForRelease=true /p:DownloadUrl=%DOWNLOAD_URL% /p:DownloadUrlBase= /p:ReleaseUri=%RELEASE_URI%
