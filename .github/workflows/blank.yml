@@ -25,4 +25,4 @@ jobs:
           tar xf v3.8.4.tar.gz
           cd cpython-3.8.4
           PCbuild\build.bat -e -p ARM64
-          dir arm64
+          dir PCBuild\arm64
