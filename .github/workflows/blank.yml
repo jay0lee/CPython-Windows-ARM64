@@ -41,7 +41,7 @@ jobs:
           cd cpython-3.8.5
           dir PCBuild
           call "PCBuild\find_msbuild.bat" %MSBUILD%
-          set PCBUILD=PCbuild
+          set PCBUILD=PCbuild\
           set Py_OutDir=%PCBUILD%
           call "Tools\msi\get_externals.bat"
           set RELEASE_URI=http://github.com/jay0lee/CPython-Windows-{arch}
