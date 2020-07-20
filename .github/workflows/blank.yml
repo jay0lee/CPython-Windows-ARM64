@@ -43,8 +43,15 @@ jobs:
           dir PCBuild
           call "PCBuild\find_msbuild.bat" %MSBUILD%
           set D=%~dp0
-          %MSBUILD% "%D%make_zip.proj" /t:Build %BUILDOPTS% /p:OutputPath="PCBuild"
-          %MSBUILD% "%D%..\nuget\make_pkg.proj" /t:Build /p:Configuration=Release /p:Platform=arm64 /p:OutputPath="PCBuild"
+          set PCBUILD=%D%..\..\PCbuild\
+          if NOT DEFINED Py_OutDir set Py_OutDir=%PCBUILD%
+          set EXTERNALS=%D%..\..\externals\windows-installer\
+          call "%D%get_externals.bat"
+          set RELEASE_URI=http://github.com/jay0lee/CPython-Windows-{arch}
+          set DOWNLOAD_URL=$RELEASE_URI/releases
+          set BUILDOPTS=/p:Platform=%1 /p:BuildForRelease=true /p:DownloadUrl=%DOWNLOAD_URL% /p:DownloadUrlBase= /p:ReleaseUri=%RELEASE_URI%
+          %MSBUILD% "%D%make_zip.proj" /t:Build %BUILDOPTS% /p:OutputPath="%PCBuild%"
+          %MSBUILD% "%D%..\nuget\make_pkg.proj" /t:Build /p:Configuration=Release /p:Platform=arm64 /p:OutputPath="%PCBuild%"
           dir PCBuild
 
       - name: Create GitHub Release
