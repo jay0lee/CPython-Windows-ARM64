@@ -25,21 +25,21 @@ jobs:
 
       - name: Compile Python
         run: |
-          curl -O -L https://github.com/python/cpython/archive/v3.8.4.tar.gz
-          tar xf v3.8.4.tar.gz
-          cd cpython-3.8.4
+          curl -O -L https://github.com/python/cpython/archive/v3.8.5.tar.gz
+          tar xf v3.8.5.tar.gz
+          cd cpython-3.8.5
           PCbuild\build.bat -e -p ARM64
           dir PCBuild\arm64
 
       - name: Create zip file
         shell: cmd
         run: |
-          powershell Compress-7Zip "cpython-3.8.4\PCBuild\arm64" -ArchiveFileName "Python-3.8.4-Windows-ARM64.zip" -Format Zip
+          powershell Compress-7Zip "cpython-3.8.5\PCBuild\arm64" -ArchiveFileName "Python-3.8.5-Windows-ARM64.zip" -Format Zip
 
       - name: Building EXE and ZIP
         shell: cmd
         run: |
-          cd cpython-3.8.4
+          cd cpython-3.8.5
           dir PCBuild
           call "PCBuild\find_msbuild.bat" %MSBUILD%
           set D=%~dp0
@@ -74,6 +74,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Python-3.8.4-Windows-ARM64.zip
-          asset_name: Python-3.8.4-Windows-ARM64.zip
+          asset_path: ./Python-3.8.5-Windows-ARM64.zip
+          asset_name: Python-3.8.5-Windows-ARM64.zip
           asset_content_type: application/zip
