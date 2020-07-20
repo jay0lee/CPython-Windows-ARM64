@@ -32,8 +32,13 @@ jobs:
           dir PCBuild\arm64
 
       - name: Create zip file
-        shell: powershell
-        run: Compress-7Zip "PCBuild\arm64" -ArchiveFileName "Python-3.8.4-Windows-ARM64.zip" -Format Zip
+        shell: cmd
+        run: |
+          pwd
+          dir
+          powershell Compress-7Zip "PCBuild\arm64" -ArchiveFileName "Python-3.8.4-Windows-ARM64.zip" -Format Zip
+          pwd
+          dir
 
       - name: Create GitHub Release
         id: create_release
