@@ -25,4 +25,4 @@ jobs:
           dir
           tar xvvf v3.8.4.tar.gz
           cd cpython-3.8.4
-          PCbuild\build.bat -e -p ARM64 -vv --pgo        
+          PCbuild\build.bat -e -p ARM64 -v      
