@@ -19,6 +19,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Install 7Zip PowerShell Module
+        shell: powershell
+        run: Install-Module 7Zip4PowerShell -Force -Verbose
+
       - name: Compile Python
         run: |
           curl -O -L https://github.com/python/cpython/archive/v3.8.4.tar.gz
@@ -26,6 +30,31 @@ jobs:
           cd cpython-3.8.4
           PCbuild\build.bat -e -p ARM64
           dir PCBuild\arm64
-      - uses: montudor/action-zip@v0.1.0
+
+      - name: Create zip file
+        shell: powershell
+        run: Compress-7Zip "PCBuild\arm64" -ArchiveFileName "Python-3.8.4-Windows-ARM64.zip" -Format Zip
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: zip -qq -r ./cpython-3.8.4-arm64.zip ./PCBuild/arm64
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Automated Release by GitHub Action CI
+          draft: true
+          prerelease: true
+
+      - name: Upload GitHub Release File
+        id: upload-release-asset-arm64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Python-3.8.4-Windows-ARM64.zip
+          asset_name: Python-3.8.4-Windows-ARM64.zip
+          asset_content_type: application/zip
