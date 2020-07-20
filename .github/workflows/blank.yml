@@ -36,6 +36,17 @@ jobs:
         run: |
           powershell Compress-7Zip "cpython-3.8.4\PCBuild\arm64" -ArchiveFileName "Python-3.8.4-Windows-ARM64.zip" -Format Zip
 
+      - name: Building EXE and ZIP
+        shell: cmd
+        run: |
+          cd cpython-3.8.4
+          dir PCBuild
+          call "PCBuild\find_msbuild.bat" %MSBUILD%
+          set D=%~dp0
+          %MSBUILD% "%D%make_zip.proj" /t:Build %BUILDOPTS% /p:OutputPath="PCBuild"
+          %MSBUILD% "%D%..\nuget\make_pkg.proj" /t:Build /p:Configuration=Release /p:Platform=arm64 /p:OutputPath="PCBuild"
+          dir PCBuild
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@latest
