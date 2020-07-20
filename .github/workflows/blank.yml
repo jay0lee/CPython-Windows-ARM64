@@ -19,13 +19,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Set Python Version
+        run: echo '::set-env name=PYTHON_VER::3.8.4'
+
       - name: Compile Python
         run: |
           curl -O -L https://github.com/python/cpython/archive/v$PYTHON_VER.tar.gz
           dir
           tar xvvf v$PYTHON_VER.tar.gz
           cd cpython-$PYTHON_VER
-          PCbuild\build.bat -e -p ARM64 -vv --pgo
-        env:
-          PYTHON_VER: 3.8.4
-        
+          PCbuild\build.bat -e -p ARM64 -vv --pgo        
