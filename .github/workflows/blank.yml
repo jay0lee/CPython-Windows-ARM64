@@ -26,3 +26,6 @@ jobs:
           cd cpython-3.8.4
           PCbuild\build.bat -e -p ARM64
           dir PCBuild\arm64
+      - uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ./cpython-3.8.4-arm64.zip ./PCBuild/arm64
