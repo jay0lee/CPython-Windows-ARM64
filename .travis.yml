@@ -1,0 +1,16 @@
+env:
+  global:
+    PYTHONVER="3.8.4"
+    secure: "TODO"
+
+jobs:
+  include:
+    - os: windows
+      name: "Windows 64-bit"
+      language: shell
+
+install:
+  - curl -O -L https://github.com/python/cpython/archive/v$PYTHONVER.tar.gz
+  - tar xvvf v$PYTHONVER.tar.gz
+  - cd cpython-$PYTHONVER
+  - PCbuild\build.bat -e -p ARM64 -vv --pgo
