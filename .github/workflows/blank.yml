@@ -22,7 +22,6 @@ jobs:
       - name: Compile Python
         env:
           PYTHONVER: 3.8.4
-        uses: actions/checkout@v2
         run: |
           curl -O -L https://github.com/python/cpython/archive/v$PYTHONVER.tar.gz
           dir
