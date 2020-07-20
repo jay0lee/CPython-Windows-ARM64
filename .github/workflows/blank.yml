@@ -27,7 +27,6 @@ jobs:
       run: |
         set PYTHONVER=3.8.4
         curl -O -L https://github.com/python/cpython/archive/v$PYTHONVER.tar.gz
-        ls -l
         dir
         tar xvvf v$PYTHONVER.tar.gz
         cd cpython-$PYTHONVER
