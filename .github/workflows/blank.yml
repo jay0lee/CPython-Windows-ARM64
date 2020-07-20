@@ -22,7 +22,7 @@ jobs:
       - name: Compile Python
         run: |
           curl -O -L https://github.com/python/cpython/archive/v3.8.4.tar.gz
-          dir
-          tar xvvf v3.8.4.tar.gz
+          tar xf v3.8.4.tar.gz
           cd cpython-3.8.4
-          PCbuild\build.bat -e -p ARM64 -v      
+          PCbuild\build.bat -e -p ARM64
+          dir arm64
