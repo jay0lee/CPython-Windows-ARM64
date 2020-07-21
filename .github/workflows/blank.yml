@@ -41,7 +41,7 @@ jobs:
           cd cpython-3.8.5
           dir PCBuild
           call "PCBuild\find_msbuild.bat" %MSBUILD%
-          set PCBUILD=PCbuild\
+          set PCBUILD=PCbuild
           mkdir externals
           set EXTERNALS=externals
           set Py_OutDir=%PCBUILD%
