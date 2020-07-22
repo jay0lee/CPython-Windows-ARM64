@@ -28,8 +28,8 @@ jobs:
           curl -O -L -s https://github.com/python/cpython/archive/v3.8.5.tar.gz
           tar xf v3.8.5.tar.gz
           cd cpython-3.8.5
-          dir ..
-          cp ..\msi.props Tools\msi\
+          dir ..\..
+          cp ..\..\msi.props Tools\msi\
           PCbuild\build.bat -e -p x64
           PCbuild\build.bat -e -p ARM64
 
