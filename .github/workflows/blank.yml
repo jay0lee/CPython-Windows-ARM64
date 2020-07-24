@@ -36,6 +36,10 @@ jobs:
       - name: Create zip file
         shell: cmd
         run: |
+          mkdir cpython-3.8.5\PCBuild\arm64\lib
+          mkdir cpython-3.8.5\PCBuild\arm64\include
+          xcopy /i /e cpython-3.8.5\lib\*.* cpython-3.8.5\PCBuild\arm64\lib
+          xcopy /i /e cpython-3.8.5\include\*.* cpython-3.8.5\PCBuild\arm64\include
           powershell Compress-7Zip "cpython-3.8.5\PCBuild\arm64" -ArchiveFileName "Python-3.8.5-Windows-ARM64.zip" -Format Zip
 
       - name: Building EXE and ZIP
