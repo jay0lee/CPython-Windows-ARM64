@@ -25,25 +25,25 @@ jobs:
 
       - name: Compile Python
         run: |
-          curl -O -L -s https://github.com/python/cpython/archive/v3.8.5.tar.gz
-          tar xf v3.8.5.tar.gz
-          cd cpython-3.8.5
+          curl -O -L -s https://github.com/python/cpython/archive/v3.9.0.tar.gz
+          tar xf v3.9.0.tar.gz
+          cd cpython-3.9.0
           PCbuild\build.bat -e -p x64
           PCbuild\build.bat -e -p ARM64
 
       - name: Create zip file
         shell: cmd
         run: |
-          mkdir cpython-3.8.5\PCBuild\arm64\lib
-          mkdir cpython-3.8.5\PCBuild\arm64\include
-          xcopy /i /e cpython-3.8.5\lib\*.* cpython-3.8.5\PCBuild\arm64\lib
-          xcopy /i /e cpython-3.8.5\include\*.* cpython-3.8.5\PCBuild\arm64\include
-          powershell Compress-7Zip "cpython-3.8.5\PCBuild\arm64" -ArchiveFileName "Python-3.8.5-Windows-ARM64.zip" -Format Zip
+          mkdir cpython-3.9.0\PCBuild\arm64\lib
+          mkdir cpython-3.9.0\PCBuild\arm64\include
+          xcopy /i /e cpython-3.9.0\lib\*.* cpython-3.9.0\PCBuild\arm64\lib
+          xcopy /i /e cpython-3.9.0\include\*.* cpython-3.9.0\PCBuild\arm64\include
+          powershell Compress-7Zip "cpython-3.9.0\PCBuild\arm64" -ArchiveFileName "Python-3.9.0-Windows-ARM64.zip" -Format Zip
 
       - name: Building EXE and ZIP
         shell: cmd
         run: |
-          cd cpython-3.8.5
+          cd cpython-3.9.0
           call "PCbuild\find_msbuild.bat" %MSBUILD%
           mkdir Tools\nuget\PCbuild
           xcopy /i /e PCbuild\*.* Tools\nuget\PCbuild\
@@ -81,6 +81,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Python-3.8.5-Windows-ARM64.zip
-          asset_name: Python-3.8.5-Windows-ARM64.zip
+          asset_path: ./Python-3.9.0-Windows-ARM64.zip
+          asset_name: Python-3.9.0-Windows-ARM64.zip
           asset_content_type: application/zip
