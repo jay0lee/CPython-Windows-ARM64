@@ -27,8 +27,8 @@ jobs:
         run: |
           git clone https://github.com/jay0lee/cpython.git
           cd cpython
-          #PCbuild\build.bat -e -p x64
-          #PCbuild\build.bat -e -p ARM64
+          PCbuild\build.bat -e -p x64
+          PCbuild\build.bat -e -p ARM64
 
       #- name: Create zip file
       #  shell: cmd
@@ -57,7 +57,7 @@ jobs:
           mkdir nuget_out
           set BUILDOPTS=/p:Platform=arm64 /p:BuildForRelease=true /p:DownloadUrl=%DOWNLOAD_URL% /p:DownloadUrlBase= /p:ReleaseUri=%RELEASE_URI%
           #%MSBUILD% Tools\msi\bundle\releaselocal.wixproj /t:Rebuild %BUILDOPTS% /p:RebuildAll=true
-          Tools\msi\buildrelease.bat -arm64
+          Tools\msi\buildrelease.bat -arm64 -skip-msi
           dir PCBuild
           dir nuget_out
 
