@@ -57,7 +57,7 @@ jobs:
           mkdir nuget_out
           set BUILDOPTS=/p:Platform=arm64 /p:BuildForRelease=true /p:DownloadUrl=%DOWNLOAD_URL% /p:DownloadUrlBase= /p:ReleaseUri=%RELEASE_URI%
           #%MSBUILD% Tools\msi\bundle\releaselocal.wixproj /t:Rebuild %BUILDOPTS% /p:RebuildAll=true
-          Tools\msi\
+          Tools\msi\buildrelease.bat -arm64
           dir PCBuild
           dir nuget_out
 
