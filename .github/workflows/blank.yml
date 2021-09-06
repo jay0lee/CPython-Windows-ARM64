@@ -25,6 +25,7 @@ jobs:
           git checkout 3.9
 
       - name: Build Python
+        run: |
           cd cpython
           for arch in Win32 x64 ARM ARM64; do
               PCbuild\build.bat -e -p "${arch}"
