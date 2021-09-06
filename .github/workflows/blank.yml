@@ -10,14 +10,10 @@ on:
   pull_request:
     branches: [ master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: windows-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Install 7Zip PowerShell Module
         shell: powershell
@@ -26,42 +22,20 @@ jobs:
       - name: Clone Python
         run: |
           git clone https://github.com/jay0lee/cpython.git
-          cd cpython
-          PCbuild\build.bat -e -p Win32
-          PCbuild\build.bat -e -p x64
-          PCbuild\build.bat -e -p ARM64
+          git checkout 3.9
 
-      #- name: Create zip file
-      #  shell: cmd
-      #  run: |
-      #    mkdir cpython-3.9.7\PCBuild\arm64\lib
-      #    mkdir cpython-3.9.7\PCBuild\arm64\include
-      #    xcopy /i /e cpython-3.9.7\lib\*.* cpython-3.9.7\PCBuild\arm64\lib
-      #    xcopy /i /e cpython-3.9.7\include\*.* cpython-3.9.7\PCBuild\arm64\include
-      #    powershell Compress-7Zip "cpython-3.9.7\PCBuild\arm64" -ArchiveFileName "Python-3.9.7-Windows-ARM64.zip" -Format Zip
+      - name: Build Python
+          cd cpython
+          for arch in Win32 x64 ARM ARM64; do
+              PCbuild\build.bat -e -p "${arch}"
+          done
 
       - name: Building EXE and ZIP
         shell: cmd
         run: |
           cd cpython
-          call "PCbuild\find_msbuild.bat" %MSBUILD%
-          mkdir Tools\nuget\PCbuild
-          xcopy /i /e PCbuild\*.* Tools\nuget\PCbuild\
-          set PCBUILD=PCbuild\
-          mkdir externals
-          set EXTERNALS=externals
-          set Py_OutDir=%PCBUILD%
-          call "Tools\msi\get_externals.bat"
-          dir externals
-          set RELEASE_URI=http://github.com/jay0lee/CPython-Windows-{arch}
-          set DOWNLOAD_URL=$RELEASE_URI/releases
-          mkdir nuget_out
-          set BUILDOPTS=/p:Platform=arm64 /p:BuildForRelease=true /p:DownloadUrl=%DOWNLOAD_URL% /p:DownloadUrlBase= /p:ReleaseUri=%RELEASE_URI%
-          #%MSBUILD% Tools\msi\bundle\releaselocal.wixproj /t:Rebuild %BUILDOPTS% /p:RebuildAll=true
-          Tools\msi\buildrelease.bat -arm64 --skip-msi
-          dir PCBuild
-          dir nuget_out
-
+          Tools\msi\buildrelease.bat -arm64
+          
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@latest
