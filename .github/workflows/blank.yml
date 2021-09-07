@@ -13,56 +13,65 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86, x64, arm, arm64]
+        majorpython: [3.9, 3.10]
 
     steps:
+      - name: Set environment variables
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          switch ( $ARCH )
+          {
+            x86
+              {
+                $installer_arch = 'Win32'
+                $embedded_arch = ''
+              }
+            x64
+              {
+                $installer_arch = 'AMD64'
+                $embedded_arch = 'ADM64'
+              }
+            arm
+              {
+                $installer_arch = 'ARM'
+                $embedded_arch = 'ARM'
+              }
+            arm64
+              {
+                $installer_arch = 'ARM64'
+                $embedded_arch = 'ARM64'
+              }
+          }  
+          Write-Host "ARCH=${ARCH}" >> $GITHUB_ENV
+          Write-Host "installer_arch=${installer_arch}" >> $GITHUB_ENV
+          Write-Host "embedded_arch=${embedded_arch}" >> $GITHUB_ENV
+
       - name: Install 7Zip PowerShell Module
-        shell: powershell
         run: Install-Module 7Zip4PowerShell -Force -Verbose
 
       - name: Clone Python
+        env:
+          majorpython: {{ matrix.majorpython }}
         run: |
           git clone https://github.com/jay0lee/cpython.git
           cd cpython
-          git checkout 3.9
+          git checkout $majorpython
 
-      #- name: Build Python
-      #  run: |
-      #    cd cpython
-      #    $archArray = "Win32","x64","ARM","ARM64"
-      #    foreach ($arch in $archArray)
-      #    {
-      #      PCbuild\build.bat -e -p $arch
-      #    }
-
-      - name: Building EXE and ZIP
+      - name: Build installers
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -x64 --out release
+          Tools\msi\buildrelease.bat -$ARCH --out release
           echo "In release:"
           dir release\
-          dir release\amd64\
-          dir release\amd64\binaries\
-          
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Automated Release by GitHub Action CI
-          draft: true
-          prerelease: true
+          dir release\*\
 
-      - name: Upload GitHub Release File
-        id: upload-release-asset-arm64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Python-3.9.7-Windows-ARM64.zip
-          asset_name: Python-3.9.7-Windows-ARM64.zip
-          asset_content_type: application/zip
+          name: python-${{ env.installer_arch }}.exe
+          path: |
+            cpython/release/${{ env.installer_arch }}.exe
