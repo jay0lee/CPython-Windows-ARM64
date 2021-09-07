@@ -81,7 +81,7 @@ jobs:
           $pyversion = $foundversion.matches.groups[1].Value
           echo "Building Python version $pyversion"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
-          Tools\msi\buildrelease.bat -$env:ARCH --out release
+          Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
