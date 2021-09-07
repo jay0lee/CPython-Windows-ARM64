@@ -28,9 +28,11 @@ jobs:
       - name: Build Python
         run: |
           cd cpython
-          for arch in Win32 x64 ARM ARM64; do
-              PCbuild\build.bat -e -p "${arch}"
-          done
+          $archArray = "Win32","x64","ARM","ARM64"
+          foreach ($arch in $archArray)
+          {
+            PCbuild\build.bat -e -p $arch
+          }
 
       - name: Building EXE and ZIP
         shell: cmd
