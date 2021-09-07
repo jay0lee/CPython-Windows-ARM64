@@ -15,8 +15,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [x86, x64, arm, arm64]
-        majorpython: ["3.9", "3.10"]
+        arch: [x86, x64, arm64]
+        majorpython: ["3.9"]
 
     steps:
       - name: Set environment variables
