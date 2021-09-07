@@ -56,7 +56,7 @@ jobs:
         run: |
           choco install python3 --params "/InstallDir:c:\python"
           choco install sphinx
-          c:\python\scripts\pip.exe install --upgrade pip
+          c:\python\scripts\pip.exe install --upgrade pip --user
           
       - name: Clone Python
         env:
