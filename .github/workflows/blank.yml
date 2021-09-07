@@ -34,12 +34,7 @@ jobs:
             x64
               {
                 $env:installerarch = 'AMD64'
-                $env:embeddedarch = 'ADM64'
-              }
-            arm
-              {
-                $env:installerarch = 'ARM'
-                $env:embeddedarch = 'ARM'
+                $env:embeddedarch = 'AMD64'
               }
             arm64
               {
@@ -54,9 +49,11 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "embeddedarch=${env:embeddedarch}"
 
-      - name: Install 7Zip PowerShell Module
-        run: Install-Module 7Zip4PowerShell -Force -Verbose
-
+      - name: Install tools with Choco
+        run: |
+          choco install python3 --params "/InstallDir:c:\python"
+          choco install sphinx
+          
       - name: Clone Python
         env:
           majorpython: ${{ matrix.majorpython }}
@@ -69,15 +66,22 @@ jobs:
         run: |
           cd cpython
           PCBuild\get_externals.bat
-          # always build x64 since it's true arch of GitHub Action
-          Tools\msi\buildrelease.bat -x64 --out release
-          If ($env:ARCH -ne "x64")
-            {
-              Tools\msi\buildrelease.bat -$env:ARCH --out release
-            }
+          $env:PYTHON = "c:\python\python.exe"
+          echo "Python location: $env:PYTHON"
+          $env:PYTHON -V
+          $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
+          echo "Sphinx Build location: $env:SPHINXBUILD"
+          $env:SPHINXBUILD --version
+          Tools\msi\buildrelease.bat -$env:ARCH --out release
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
+          echo "----ONE----"
+          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name
+          echo "----TWO----"
+          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch"
+          echo "----THREE----"
+          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
           $pyver = Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
           echo "pyver: $env:pyver"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
