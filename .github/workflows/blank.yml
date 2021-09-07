@@ -29,16 +29,19 @@ jobs:
             x86
               {
                 $env:installerarch = 'Win32'
+                $env:filearch = ''
                 $env:embeddedarch = ''
               }
             x64
               {
                 $env:installerarch = 'AMD64'
+                $env:filearch = '-AMD64'
                 $env:embeddedarch = 'AMD64'
               }
             arm64
               {
                 $env:installerarch = 'ARM64'
+                $env:filearch = '-ARM64'
                 $env:embeddedarch = 'ARM64'
               }
           }
@@ -53,6 +56,7 @@ jobs:
         run: |
           choco install python3 --params "/InstallDir:c:\python"
           choco install sphinx
+          c:\python\scripts\pip.exe install --upgrade pip
           
       - name: Clone Python
         env:
@@ -72,23 +76,18 @@ jobs:
           $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
+          $foundversion = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"'
+          $pyversion = $foundversion.matches.groups[1].Value
+          echo "Building Python version $pyversion"
+          Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
           Tools\msi\buildrelease.bat -$env:ARCH --out release
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
-          echo "----ONE----"
-          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name
-          echo "----TWO----"
-          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch"
-          echo "----THREE----"
-          Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
-          $pyver = Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
-          echo "pyver: $env:pyver"
-          Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
 
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: python-${{ env.pyver }}${{ env.installerarch }}.exe
+          name: python-${{ env.pyver }}${{ env.filearch }}.exe
           path: |
-            cpython/release/python-${{ env.pyver }}${{ env.installerarch }}.exe
+            cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}${{ env.filearch }}.exe
