@@ -38,7 +38,7 @@ jobs:
         shell: cmd
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -arm64
+          Tools\msi\buildrelease.bat -x64
           
       - name: Create GitHub Release
         id: create_release
