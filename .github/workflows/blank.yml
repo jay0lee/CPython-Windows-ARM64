@@ -25,20 +25,23 @@ jobs:
           cd cpython
           git checkout 3.9
 
-      - name: Build Python
-        run: |
-          cd cpython
-          $archArray = "Win32","x64","ARM","ARM64"
-          foreach ($arch in $archArray)
-          {
-            PCbuild\build.bat -e -p $arch
-          }
+      #- name: Build Python
+      #  run: |
+      #    cd cpython
+      #    $archArray = "Win32","x64","ARM","ARM64"
+      #    foreach ($arch in $archArray)
+      #    {
+      #      PCbuild\build.bat -e -p $arch
+      #    }
 
       - name: Building EXE and ZIP
-        shell: cmd
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -x64
+          Tools\msi\buildrelease.bat -x64 --out release
+          echo "In release:"
+          dir release\
+          dir release\amd64\
+          dir release\amd64\binaries\
           
       - name: Create GitHub Release
         id: create_release
