@@ -52,6 +52,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${env:ARCH}"
           Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "embeddedarch=${env:embeddedarch}"
+          Add-Content -Path $env:GITHUB_ENV -Value "filearch=${env:filearch}"
 
       - name: Install tools with Choco
         run: |
@@ -70,7 +71,6 @@ jobs:
       - name: Build installers
         run: |
           cd cpython
-          PCBuild\get_externals.bat
           $env:PYTHON = "c:\python\python.exe"
           echo "Python location: $env:PYTHON"
           Invoke-Expression "$env:PYTHON -V"
@@ -78,9 +78,10 @@ jobs:
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           $foundversion = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"'
-          $pyversion = $foundversion.matches.groups[1].Value
+          $pyver = $foundversion.matches.groups[1].Value
           echo "Building Python version $pyversion"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
+          PCBuild\get_externals.bat
           Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
           echo "In release:"
           dir release\
