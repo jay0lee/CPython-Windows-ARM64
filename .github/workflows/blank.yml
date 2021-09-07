@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         arch: [x86, x64, arm, arm64]
-        majorpython: [3.9, 3.10]
+        majorpython: ["3.9", "3.10"]
 
     steps:
       - name: Set environment variables
