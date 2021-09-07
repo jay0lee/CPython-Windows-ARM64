@@ -14,6 +14,7 @@ jobs:
   build:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         arch: [x86, x64, arm64]
         majorpython: ["3.9"]
