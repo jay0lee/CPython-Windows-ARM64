@@ -50,8 +50,8 @@ jobs:
           Write-Output "installerarch: $env:installerarch"
           Write-Output "embeddedarch: $env:embeddedarch"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${env:ARCH}"
-          Add-Content -Path $env:GITHUB_ENV -Value "installer_arch=${env:installer_arch}"
-          Add-Content -Path $env:GITHUB_ENV -Value "embedded_arch=${env:embedded_arch}"
+          Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
+          Add-Content -Path $env:GITHUB_ENV -Value "embeddedarch=${env:embeddedarch}"
 
       - name: Install 7Zip PowerShell Module
         run: Install-Module 7Zip4PowerShell -Force -Verbose
@@ -75,6 +75,6 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: python-${{ env.installer_arch }}.exe
+          name: python-${{ env.installerarch }}.exe
           path: |
-            cpython/release/${{ env.installer_arch }}.exe
+            cpython/release/${{ env.installerarch }}.exe
