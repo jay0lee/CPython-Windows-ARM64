@@ -67,7 +67,7 @@ jobs:
       - name: Build installers
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -$ARCH --out release
+          Tools\msi\buildrelease.bat -$env:ARCH --out release
           echo "In release:"
           dir release\
           dir release\*\
