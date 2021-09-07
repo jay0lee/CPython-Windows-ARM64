@@ -78,13 +78,13 @@ jobs:
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
-          $pyver = Get-ChildItem release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
+          $pyver = Get-ChildItem .\release\$env:installerarch\python-*-$env:installerarch.exe -Name | Select-String -Pattern "^python-(.*)-$env:installerarch" | % {"$($_.matches.groups[1])"}
           echo "pyver: $env:pyver"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
 
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: python-${{ env.installerarch }}.exe
+          name: python-${{ env.pyver }}${{ env.installerarch }}.exe
           path: |
-            cpython/release/${{ env.installerarch }}.exe
+            cpython/release/python-${{ env.pyver }}${{ env.installerarch }}.exe
