@@ -47,6 +47,7 @@ jobs:
           }
           Write-Output "ARCH: $env:ARCH"
           Write-Output "installerarch: $env:installerarch"
+          Write-Output "filearch: $env:filearch"
           Write-Output "embeddedarch: $env:embeddedarch"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${env:ARCH}"
           Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
@@ -54,8 +55,8 @@ jobs:
 
       - name: Install tools with Choco
         run: |
-          choco install python3 --params "/InstallDir:c:\python"
-          choco install sphinx
+          choco install python3 --params "/InstallDir:c:\python" --limit-output
+          choco install sphinx --limit-output
           c:\python\scripts\pip.exe install --upgrade pip --user
           
       - name: Clone Python
