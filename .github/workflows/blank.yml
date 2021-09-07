@@ -27,25 +27,28 @@ jobs:
           {
             x86
               {
-                $installer_arch = 'Win32'
-                $embedded_arch = ''
+                $installerarch = 'Win32'
+                $embeddedarch = ''
               }
             x64
               {
-                $installer_arch = 'AMD64'
-                $embedded_arch = 'ADM64'
+                $installerarch = 'AMD64'
+                $embeddedarch = 'ADM64'
               }
             arm
               {
-                $installer_arch = 'ARM'
-                $embedded_arch = 'ARM'
+                $installerarch = 'ARM'
+                $embeddedarch = 'ARM'
               }
             arm64
               {
-                $installer_arch = 'ARM64'
-                $embedded_arch = 'ARM64'
+                $installerarch = 'ARM64'
+                $embeddedarch = 'ARM64'
               }
           }
+          Write-Output "ARCH: $ARCH"
+          Write-Output "installerarch: $installerarch"
+          Write-Output "embeddedarch: $embeddedarch"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${ARCH}"
           Add-Content -Path $env:GITHUB_ENV -Value "installer_arch=${installer_arch}"
           Add-Content -Path $env:GITHUB_ENV -Value "embedded_arch=${embedded_arch}"
