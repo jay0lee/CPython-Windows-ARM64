@@ -22,6 +22,7 @@ jobs:
       - name: Clone Python
         run: |
           git clone https://github.com/jay0lee/cpython.git
+          cd cpython
           git checkout 3.9
 
       - name: Build Python
