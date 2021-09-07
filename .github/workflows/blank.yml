@@ -23,27 +23,27 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
         run: |
-          switch ( $ARCH )
+          switch ( $env:ARCH )
           {
             x86
               {
-                $installerarch = 'Win32'
-                $embeddedarch = ''
+                $env:installerarch = 'Win32'
+                $env:embeddedarch = ''
               }
             x64
               {
-                $installerarch = 'AMD64'
-                $embeddedarch = 'ADM64'
+                $env:installerarch = 'AMD64'
+                $env:embeddedarch = 'ADM64'
               }
             arm
               {
-                $installerarch = 'ARM'
-                $embeddedarch = 'ARM'
+                $env:installerarch = 'ARM'
+                $env:embeddedarch = 'ARM'
               }
             arm64
               {
-                $installerarch = 'ARM64'
-                $embeddedarch = 'ARM64'
+                $env:installerarch = 'ARM64'
+                $env:embeddedarch = 'ARM64'
               }
           }
           Write-Output "ARCH: $env:ARCH"
