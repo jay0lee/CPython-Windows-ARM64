@@ -46,9 +46,9 @@ jobs:
                 $embedded_arch = 'ARM64'
               }
           }
-          Add-Content -Path $env:GITHUB_ENV -Value "ARCH=$ARCH"
-          Add-Content -Path $env:GITHUB_ENV -Value "installer_arch=$installer_arch"
-          Add-Content -Path $env:GITHUB_ENV -Value "embedded_arch=$embedded_arch"
+          Add-Content -Path $env:GITHUB_ENV -Value "ARCH={ARCH}"
+          Add-Content -Path $env:GITHUB_ENV -Value "installer_arch={installer_arch}"
+          Add-Content -Path $env:GITHUB_ENV -Value "embedded_arch={embedded_arch}"
 
       - name: Install 7Zip PowerShell Module
         run: Install-Module 7Zip4PowerShell -Force -Verbose
