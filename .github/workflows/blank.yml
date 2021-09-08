@@ -45,19 +45,16 @@ jobs:
                 $env:embedarch = '-ARM64'
                 $env:skipmsi = '--skip-msi'
                 $env:skipnuget = '--skip-nuget'
+                $env:skipzip = '--skip-zip'
               }
           }
-          Write-Output "ARCH: $env:ARCH"
-          Write-Output "installerarch: $env:installerarch"
-          Write-Output "filearch: $env:filearch"
-          Write-Output "embeddedarch: $env:embedarch"
-          Write-Output "skipoptions: $env:skipoptions"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${env:ARCH}"
           Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "embedarch=${env:embedarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "filearch=${env:filearch}"
           Add-Content -Path $env:GITHUB_ENV -Value "skipmsi=${env:skipmsi}"
           Add-Content -Path $env:GITHUB_ENV -Value "skipnuget=${env:skipnuget}"
+          Add-Content -Path $env:GITHUB_ENV -Value "skipzip=${env:skipzip}"
 
       - name: Install required tools
         run: |
@@ -93,7 +90,7 @@ jobs:
         continue-on-error: true
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -$env:ARCH --out release $env:skipmsi $env:skipnuget
+          Tools\msi\buildrelease.bat -$env:ARCH --out release $env:skipmsi $env:skipnuget $env:skipzip
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
