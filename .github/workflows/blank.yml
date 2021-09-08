@@ -30,28 +30,28 @@ jobs:
               {
                 $env:installerarch = 'Win32'
                 $env:filearch = ''
-                $env:embeddedarch = ''
+                $env:embedarch = '-Win32'
               }
             x64
               {
                 $env:installerarch = 'AMD64'
                 $env:filearch = '-AMD64'
-                $env:embeddedarch = 'AMD64'
+                $env:embedarch = '-AMD64'
               }
             arm64
               {
                 $env:installerarch = 'ARM64'
                 $env:filearch = '-ARM64'
-                $env:embeddedarch = 'ARM64'
+                $env:embedarch = '-ARM64'
               }
           }
           Write-Output "ARCH: $env:ARCH"
           Write-Output "installerarch: $env:installerarch"
           Write-Output "filearch: $env:filearch"
-          Write-Output "embeddedarch: $env:embeddedarch"
+          Write-Output "embeddedarch: $env:embedarch"
           Add-Content -Path $env:GITHUB_ENV -Value "ARCH=${env:ARCH}"
           Add-Content -Path $env:GITHUB_ENV -Value "installerarch=${env:installerarch}"
-          Add-Content -Path $env:GITHUB_ENV -Value "embeddedarch=${env:embeddedarch}"
+          Add-Content -Path $env:GITHUB_ENV -Value "embedarch=${env:embedarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "filearch=${env:filearch}"
 
       - name: Install tools with Choco
@@ -78,9 +78,10 @@ jobs:
           $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
-          $foundversion = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"'
-          $pyver = $foundversion.matches.groups[1].Value
-          echo "Building Python version $pyversion"
+          $env:foundversion = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"'
+          echo $env:foundversion
+          $env:pyver = $env:foundversion.matches.groups[1].Value
+          echo "Building Python version $pyver"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
           PCBuild\get_externals.bat
           Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
@@ -99,6 +100,6 @@ jobs:
       - name: upload ZIP artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: python-${{ env.pyver }}-embed${{ env.filearch }}.zip
+          name: python-${{ env.pyver }}-embed${{ env.embedarch }}.zip
           path: |
-            cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}-embed${{ env.filearch }}.zip
+            cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}-embed${{ env.embedarch }}.zip
