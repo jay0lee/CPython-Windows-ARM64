@@ -94,7 +94,7 @@ jobs:
           dir release\$env:installerarch\
           dir release\$env:installerarch\binaries\
 
-      - name: upload EXE artifacts
+      - name: upload exe artifacts
         uses: actions/upload-artifact@v2
         with:
           name: python-${{ env.pyver }}${{ env.filearch }}.exe
@@ -104,7 +104,7 @@ jobs:
       - name: Zip binaries folder
         run: |
           cd cpython
-          "Program Files/7-Zip/7z.exe" a -tzip python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip release/${{ env.installerarch }}/binaries/
+          Compress-Archive -Path .\release\${{ env.installerarch }}\binaries\ -DestinationPath .\python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip
 
       - name: upload binaries zip
         uses: actions/upload-artifact@v2
