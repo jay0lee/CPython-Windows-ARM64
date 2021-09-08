@@ -78,10 +78,8 @@ jobs:
           $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
-          $env:foundversion = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"'
-          echo $env:foundversion
-          $env:pyver = $env:foundversion.matches.groups[1].Value
-          echo "Building Python version $pyver"
+          $env:pyver = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"(.*)"' | % {$_.matches.groups[1].Value}
+          echo "Building Python version $env:pyver"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
           PCBuild\get_externals.bat
           Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
