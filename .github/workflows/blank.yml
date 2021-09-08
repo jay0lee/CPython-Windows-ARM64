@@ -88,7 +88,7 @@ jobs:
         continue-on-error: true
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
+          Tools\msi\buildrelease.bat -$env:ARCH --out release
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
@@ -104,7 +104,7 @@ jobs:
       - name: Zip binaries folder
         run: |
           cd cpython
-          /c/Program\ Files/7-Zip/7z.exe a -tzip python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip release/${{ env.installerarch }}/binaries/
+          "Program Files/7-Zip/7z.exe" a -tzip python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip release/${{ env.installerarch }}/binaries/
 
       - name: upload binaries zip
         uses: actions/upload-artifact@v2
