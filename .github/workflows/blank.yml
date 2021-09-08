@@ -54,34 +54,40 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "embedarch=${env:embedarch}"
           Add-Content -Path $env:GITHUB_ENV -Value "filearch=${env:filearch}"
 
-      - name: Install tools with Choco
+      - name: Install required tools
         run: |
-          choco install python3 --params "/InstallDir:c:\python" --limit-output
-          choco install sphinx --limit-output
+          choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
           c:\python\scripts\pip.exe install --upgrade pip --user
+          choco install sphinx --limit-output --no-progress
+          $env:PYTHON = "c:\python\python.exe"
+          echo "Python location: $env:PYTHON"
+          Invoke-Expression "$env:PYTHON -V"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
+          $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
+          echo "Sphinx Build location: $env:SPHINXBUILD"
+          Invoke-Expression "$env:SPHINXBUILD --version"
+          Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           
-      - name: Clone Python
+      - name: Clone Python and determine version
         env:
           majorpython: ${{ matrix.majorpython }}
         run: |
           git clone https://github.com/jay0lee/cpython.git
           cd cpython
           git checkout $env:majorpython
+          $env:pyver = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"([0-9.]*)' | % {$_.matches.groups[1].Value}
+          echo "Building Python version $env:pyver"
+          Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
 
+      - name: Get external Python dependencies
+        run: |
+          cd cpython
+          PCBuild\get_externals.bat
+          
       - name: Build installers
         continue-on-error: true
         run: |
           cd cpython
-          $env:PYTHON = "c:\python\python.exe"
-          echo "Python location: $env:PYTHON"
-          Invoke-Expression "$env:PYTHON -V"
-          $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
-          echo "Sphinx Build location: $env:SPHINXBUILD"
-          Invoke-Expression "$env:SPHINXBUILD --version"
-          $env:pyver = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"([0-9.]*)' | % {$_.matches.groups[1].Value}
-          echo "Building Python version $env:pyver"
-          Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
-          PCBuild\get_externals.bat
           Tools\msi\buildrelease.bat -$env:ARCH --out release --skip-nuget --skip-msi
           echo "In release:"
           dir release\
@@ -95,7 +101,19 @@ jobs:
           path: |
             cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}${{ env.filearch }}.exe
 
-      - name: upload ZIP artifacts
+      - name: Zip binaries folder
+        run: |
+          cd cpython
+          /c/Program\ Files/7-Zip/7z.exe a -tzip python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip release/${{ env.installerarch }}/binaries/
+
+      - name: upload binaries zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip
+          path: |
+            cpython/python-${{ env.pyver }}-binaries-${{ env.ARCH }}.zip
+
+      - name: upload embed zip file
         uses: actions/upload-artifact@v2
         with:
           name: python-${{ env.pyver }}-embed${{ env.embedarch }}.zip
