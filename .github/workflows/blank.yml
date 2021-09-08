@@ -69,6 +69,7 @@ jobs:
           git checkout $env:majorpython
 
       - name: Build installers
+        continue-on-error: true
         run: |
           cd cpython
           $env:PYTHON = "c:\python\python.exe"
@@ -86,10 +87,18 @@ jobs:
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
+          dir release\$env:installerarch\binaries\
 
-      - name: upload artifacts
+      - name: upload EXE artifacts
         uses: actions/upload-artifact@v2
         with:
           name: python-${{ env.pyver }}${{ env.filearch }}.exe
           path: |
             cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}${{ env.filearch }}.exe
+
+      - name: upload ZIP artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-${{ env.pyver }}-embed${{ env.filearch }}.zip
+          path: |
+            cpython/release/${{ env.installerarch }}/python-${{ env.pyver }}-embed${{ env.filearch }}.zip
