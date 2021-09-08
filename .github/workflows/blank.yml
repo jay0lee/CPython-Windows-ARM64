@@ -43,7 +43,7 @@ jobs:
                 $env:installerarch = 'ARM64'
                 $env:filearch = '-ARM64'
                 $env:embedarch = '-ARM64'
-                $env:skipoptions = '--skip-msi --skip-nuget'
+                $env:skipoptions = "--skip-msi", "--skip-nuget"
               }
           }
           Write-Output "ARCH: $env:ARCH"
