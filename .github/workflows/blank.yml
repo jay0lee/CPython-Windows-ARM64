@@ -1,9 +1,5 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   push:
     branches: [ master ]
@@ -61,11 +57,10 @@ jobs:
           python -V
           $env:PYTHON = (gcm python).Path
           $env:PIP = (gcm pip).Path
-          #choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
           echo "PYTHON:"
           Invoke-Expression "$env:PYTHON -V"
           Invoke-Expression "$env:PIP install --upgrade pip --user"
-          choco install sphinx --limit-output --no-progress
+          Invoke-Expression "$env:PIP install --upgrade sphinx --user"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
           Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
           $env:SPHINXBUILD = (gcm sphinx-build).Path
@@ -100,7 +95,7 @@ jobs:
         continue-on-error: true
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -$env:ARCH --out release --python-exe c:\python\python.exe $env:skipmsi $env:skipnuget $env:skipzip
+          Tools\msi\buildrelease.bat -$env:ARCH --out release --python-exe $env:PYTHON $env:skipmsi $env:skipnuget $env:skipzip
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
