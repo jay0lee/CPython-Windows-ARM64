@@ -56,12 +56,15 @@ jobs:
         run: |
           $env:PYTHON = (gcm python).Path
           $env:PIP = (gcm pip).Path
-          $env:scriptpath = Resolve-Path -Path $env:PYTHON\..\Scripts
+          $env:PYTHONPATH = Resolve-Path -Path $env:PYTHON\..
+          $env:scriptpath = "$env:PYTHONPATH\Scripts"
+          echo "PYTHONPATH: $env:PYTHONPATH"
           Invoke-Expression "$env:PYTHON -V"
           Invoke-Expression "$env:PIP install --upgrade pip"
           Invoke-Expression "$env:PIP install --upgrade sphinx"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
           Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHONPATH=${env:PYTHONPATH}"
           $env:SPHINXBUILD = "$env:scriptpath\sphinx-build.exe"
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
@@ -74,14 +77,17 @@ jobs:
           # Out-Null forces PowerShell to wait till install finishes
           .\wix314.exe /install /quiet /norestart | Out-Null
 
-      - name: Clone Python and determine version
+      - name: Clone Python Source
         env:
           majorpython: ${{ matrix.majorpython }}
         run: |
           git clone https://github.com/jay0lee/cpython.git
           cd cpython
           git checkout $env:majorpython
-          $env:pyver = Select-String -Path Include\patchlevel.h -Pattern 'PY_VERSION\s*"([0-9.]*)' | % {$_.matches.groups[1].Value}
+          
+      - name: Determine Python Source Version
+        run: |
+          $env:pyver = Select-String -Path cpython\Include\patchlevel.h -Pattern 'PY_VERSION\s*"([0-9.]*)' | % {$_.matches.groups[1].Value}
           echo "Building Python version $env:pyver"
           Add-Content -Path $env:GITHUB_ENV -Value "pyver=${env:pyver}"
 
@@ -94,7 +100,7 @@ jobs:
         continue-on-error: true
         run: |
           cd cpython
-          Tools\msi\buildrelease.bat -$env:ARCH --out release --python-exe $env:PYTHON $env:skipmsi $env:skipnuget $env:skipzip
+          Tools\msi\buildrelease.bat -$env:ARCH --out release --python-exe $env:PYTHON --py-source-path $env:PYTHONPATH $env:skipmsi $env:skipnuget $env:skipzip
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
