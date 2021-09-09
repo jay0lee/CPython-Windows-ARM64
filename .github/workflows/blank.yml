@@ -60,7 +60,8 @@ jobs:
         run: |
           Invoke-WebRequest -Uri https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe -OutFile wix314.exe
           dir
-          .\wix314.exe /install /quiet /norestart
+          # Out-Null forces PowerShell to wait till install finishes
+          .\wix314.exe /install /quiet /norestart | Out-Null
 
       - name: Install required tools
         run: |
