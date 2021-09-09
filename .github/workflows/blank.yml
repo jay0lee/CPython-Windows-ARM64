@@ -63,8 +63,8 @@ jobs:
           $env:PIP = (gcm pip).Path
           #choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
           echo "PYTHON:"
-          Invoke-Expression "$PYTHON -V"
-          Invoke-Expression "$PIP install --upgrade pip --user"
+          Invoke-Expression "$env:PYTHON -V"
+          Invoke-Expression "$env:PIP install --upgrade pip --user"
           choco install sphinx --limit-output --no-progress
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
           Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
