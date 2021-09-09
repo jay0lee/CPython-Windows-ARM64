@@ -56,13 +56,6 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "skipnuget=${env:skipnuget}"
           Add-Content -Path $env:GITHUB_ENV -Value "skipzip=${env:skipzip}"
 
-      - name: Upgrade WIX to 3.14
-        run: |
-          Invoke-WebRequest -Uri https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe -OutFile wix314.exe
-          dir
-          # Out-Null forces PowerShell to wait till install finishes
-          .\wix314.exe /install /quiet /norestart | Out-Null
-
       - name: Install required tools
         run: |
           choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
@@ -76,6 +69,13 @@ jobs:
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
+
+      - name: Upgrade WIX to 3.14
+        run: |
+          Invoke-WebRequest -Uri https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe -OutFile wix314.exe
+          dir
+          # Out-Null forces PowerShell to wait till install finishes
+          .\wix314.exe /install /quiet /norestart | Out-Null
 
       - name: Clone Python and determine version
         env:
