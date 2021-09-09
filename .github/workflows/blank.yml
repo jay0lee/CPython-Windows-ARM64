@@ -69,7 +69,12 @@ jobs:
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
-          
+
+      - name: Upgrade WIX to 3.14
+        run: |
+          Invoke-WebRequest -Uri https://wixtoolset.org/downloads/v3.14.0.4118/wix314.exe -OutFile wix314.exe
+          wix314.exe /install /quiet /norestart
+
       - name: Clone Python and determine version
         env:
           majorpython: ${{ matrix.majorpython }}
