@@ -43,8 +43,8 @@ jobs:
                 $env:installerarch = 'ARM64'
                 $env:filearch = '-ARM64'
                 $env:embedarch = '-ARM64'
-                $env:skipmsi = '--skip-msi'
-                $env:skipnuget = '--skip-nuget'
+                #$env:skipmsi = '--skip-msi'
+                #$env:skipnuget = '--skip-nuget'
                 #$env:skipzip = '--skip-zip'
               }
           }
