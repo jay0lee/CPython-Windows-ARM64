@@ -58,7 +58,11 @@ jobs:
 
       - name: Install required tools
         run: |
+          Get-Command python
+          python -V
           choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
+          Get-Command python
+          python -V
           c:\python\scripts\pip.exe install --upgrade pip --user
           choco install sphinx --limit-output --no-progress
           $env:PYTHON = "c:\python\python.exe"
