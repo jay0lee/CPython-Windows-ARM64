@@ -58,18 +58,17 @@ jobs:
 
       - name: Install required tools
         run: |
-          Get-Command python
           python -V
-          choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
-          Get-Command python
-          python -V
-          c:\python\scripts\pip.exe install --upgrade pip --user
+          $env:PYTHON = (gcm python).Path
+          $env:PIP = (gcm pip).Path
+          #choco install python3 --params "/InstallDir:c:\python" --limit-output --no-progress
+          echo "PYTHON:"
+          Invoke-Expression "$PYTHON -V"
+          Invoke-Expression "$PIP install --upgrade pip --user"
           choco install sphinx --limit-output --no-progress
-          $env:PYTHON = "c:\python\python.exe"
-          echo "Python location: $env:PYTHON"
-          Invoke-Expression "$env:PYTHON -V"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
-          $env:SPHINXBUILD = "c:\python\scripts\sphinx-build.exe"
+          Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
+          $env:SPHINXBUILD = (gcm sphinx-build).Path
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
