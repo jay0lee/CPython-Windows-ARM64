@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x86, x64, arm64]
-        majorpython: ["3.9"]
+        majorpython: ["3.10"]
 
     steps:
       - name: Set environment variables
